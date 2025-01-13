@@ -3,6 +3,8 @@ package com.matthieu.myblog.controller;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.matthieu.myblog.dto.ArticleDTO;
 import com.matthieu.myblog.model.Article;
 import com.matthieu.myblog.model.Category;
 import com.matthieu.myblog.repository.ArticleRepository;
@@ -37,22 +40,25 @@ public class ArticleController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Article>> getAllArticles() {
+  public ResponseEntity<List<ArticleDTO>> getAllArticles() {
     List<Article> articles = articleRepository.findAll();
+
     if (articles.isEmpty()) {
       return ResponseEntity.noContent().build();
     }
-    return ResponseEntity.ok(articles);
+
+    List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDTO).collect(Collectors.toList());
+    return ResponseEntity.ok(articleDTOs);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Article> getArticleById(@PathVariable Long id) {
+  public ResponseEntity<ArticleDTO> getArticleById(@PathVariable Long id) {
     Article article = articleRepository.findById(id).orElse(null);
 
     if (article == null) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok(article);
+    return ResponseEntity.ok(convertToDTO(article));
   }
 
   @PostMapping
@@ -76,7 +82,7 @@ public class ArticleController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Article> updateArticle(@PathVariable Long id, @RequestBody Article articleDetails) {
+  public ResponseEntity<ArticleDTO> updateArticle(@PathVariable Long id, @RequestBody Article articleDetails) {
     Article article = articleRepository.findById(id).orElse(null);
 
     if (article == null) {
@@ -98,7 +104,7 @@ public class ArticleController {
     }
 
     Article updatedArticle = articleRepository.save(article);
-    return ResponseEntity.ok(updatedArticle);
+    return ResponseEntity.ok(convertToDTO(updatedArticle));
 
   }
 
@@ -160,5 +166,20 @@ public class ArticleController {
 
     return ResponseEntity.ok(articles);
 
+  }
+
+  private ArticleDTO convertToDTO(Article article) {
+    ArticleDTO articleDTO = new ArticleDTO();
+
+    articleDTO.setId(article.getId());
+    articleDTO.setTitle(article.getTitle());
+    articleDTO.setContent(article.getContent());
+    articleDTO.setUpdateAt(article.getUpdatedAt());
+
+    if (article.getCategory() != null) {
+      articleDTO.setCategoryName(article.getCategory().getName());
+    }
+
+    return articleDTO;
   }
 }
