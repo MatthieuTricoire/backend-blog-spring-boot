@@ -23,6 +23,10 @@ public class Article {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 
+  @ManyToOne
+  @JoinColumn(name = "category_id")
+  private Category category;
+
   public Long getId() {
     return id;
   }
@@ -41,6 +45,14 @@ public class Article {
 
   public String getContent() {
     return content;
+  }
+
+  public Category getCategory() {
+    return category;
+  }
+
+  public void setCategory(Category category) {
+    this.category = category;
   }
 
   public void setContent(String content) {
