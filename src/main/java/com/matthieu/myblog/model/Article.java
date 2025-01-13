@@ -2,7 +2,7 @@ package com.matthieu.myblog.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 public class Article {
@@ -18,10 +18,10 @@ public class Article {
   private String content;
 
   @Column(nullable = false, updatable = false)
-  private LocalTime createdAt;
+  private LocalDateTime createdAt;
 
   @Column(nullable = false)
-  private LocalTime updatedAt;
+  private LocalDateTime updatedAt;
 
   public Long getId() {
     return id;
@@ -47,19 +47,19 @@ public class Article {
     this.content = content;
   }
 
-  public LocalTime getCreatedAt() {
+  public LocalDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(LocalTime createdAt) {
+  public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
   }
 
-  public LocalTime getUpdatedAt() {
+  public LocalDateTime getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(LocalTime updatedAt) {
+  public void setUpdatedAt(LocalDateTime updatedAt) {
     this.updatedAt = updatedAt;
   }
 
