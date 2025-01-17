@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.wcs.myblog.model.Article;
 import org.wcs.myblog.repository.ArticleRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,6 +22,42 @@ public class ArticleController {
     @GetMapping
     public ResponseEntity<List<Article>> getAllArticles() {
         List<Article> articles = articleRepository.findAll();
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/search-title")
+    public ResponseEntity<List<Article>> getArticlesByTitle(@RequestParam String searchTerms) {
+        List<Article> articles = articleRepository.findByTitle(searchTerms);
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/search-content-containing")
+    public ResponseEntity<List<Article>> getArticlesByContentContaining(@RequestParam String searchContent) {
+        List<Article> articles = articleRepository.findByContentContaining(searchContent);
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/search-created-after")
+    public ResponseEntity<List<Article>> getArticlesCreatedAfter(@RequestParam LocalDateTime searchDate) {
+        List<Article> articles = articleRepository.findByCreatedAtAfter(searchDate);
+        if (articles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/last-five")
+    public ResponseEntity<List<Article>> getLastFiveArticlesOrdered() {
+        List<Article> articles = articleRepository.findTop5ByOrderByCreatedAtDesc();
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
