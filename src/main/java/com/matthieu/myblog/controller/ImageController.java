@@ -24,11 +24,9 @@ import com.matthieu.myblog.repository.ImageRepository;
 public class ImageController {
 
   private final ImageRepository imageRepository;
-  private final ArticleRepository articleRepository;
 
   public ImageController(ImageRepository imageRepository, ArticleRepository articleRepository) {
     this.imageRepository = imageRepository;
-    this.articleRepository = articleRepository;
   }
 
   @GetMapping

@@ -53,10 +53,10 @@ public class CategoryController {
   }
 
   @PostMapping
-  public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+  public ResponseEntity<CategoryDTO> createCategory(@RequestBody Category category) {
     Category savedCategory = categoryRepository.save(category);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
+    return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedCategory));
   }
 
   @PutMapping("/{id}")
@@ -67,9 +67,6 @@ public class CategoryController {
     }
 
     category.setName(categoryDetails.getName());
-    // NOTE: Il ne faut pas update les éventuels articles que l'on souhaiterait
-    // modifier ?
-
     Category categoryUpdated = categoryRepository.save(category);
 
     return ResponseEntity.ok(convertToDTO(categoryUpdated));
@@ -100,7 +97,7 @@ public class CategoryController {
             articleDTO.setId(article.getId());
             articleDTO.setTitle(article.getTitle());
             articleDTO.setContent(article.getContent());
-            articleDTO.setUpdateAt(article.getUpdatedAt());
+            articleDTO.setUpdatedAt(article.getUpdatedAt());
             articleDTO.setCategoryName(article.getCategory().getName());
             return articleDTO;
           }).collect(Collectors.toList()));
