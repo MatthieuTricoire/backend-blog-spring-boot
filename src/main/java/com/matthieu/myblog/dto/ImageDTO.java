@@ -5,7 +5,7 @@ import java.util.List;
 public class ImageDTO {
   private Long id;
   private String url;
-  private List<Long> articleIds;
+  private List<Long> articlesIds;
 
   public Long getId() {
     return id;
@@ -23,12 +23,12 @@ public class ImageDTO {
     this.url = url;
   }
 
-  public List<Long> getArticleIds() {
-    return articleIds;
+  public List<Long> getArticlesIds() {
+    return articlesIds;
   }
 
-  public void setArticleIds(List<Long> articleIds) {
-    this.articleIds = articleIds;
+  public void setArticlesIds(List<Long> articleIds) {
+    this.articlesIds = articleIds;
   }
 
 }

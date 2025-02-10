@@ -12,8 +12,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
   List<Article> findByContentContaining(String content);
 
-  List<Article> findByCreatedAtAfter(LocalDateTime date);
+  List<Article> findByCreatedAtGreaterThan(LocalDateTime createdAt);
 
-  List<Article> findTop5ByCreatedAtByDesc();
+  List<Article> findFirst5ByCreatedAtBeforeOrderByCreatedAtDesc(LocalDateTime createdAt);
 
 }
