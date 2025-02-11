@@ -9,8 +9,9 @@ public class ArticleDTO {
     private String content;
     private LocalDateTime updatedAt;
     private String categoryName;
-
     private List<String> imageUrls;
+
+    private List<AuthorDTO> authorDTOs;
 
 
     public Long getId() {
@@ -60,5 +61,13 @@ public class ArticleDTO {
 
     public void setImageUrls(List<String> imageUrls) {
         this.imageUrls = imageUrls;
+    }
+
+    public List<AuthorDTO> getAuthorDTOs() {
+        return authorDTOs;
+    }
+
+    public void setAuthorDTOs(List<AuthorDTO> authorDTOs) {
+        this.authorDTOs = authorDTOs;
     }
 }
