@@ -4,12 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wcs.myblog.dto.ArticleDTO;
-import org.wcs.myblog.model.Article;
-import org.wcs.myblog.model.Category;
-import org.wcs.myblog.model.Image;
-import org.wcs.myblog.repository.ArticleRepository;
-import org.wcs.myblog.repository.CategoryRepository;
-import org.wcs.myblog.repository.ImageRepository;
+import org.wcs.myblog.dto.AuthorDTO;
+import org.wcs.myblog.model.*;
+import org.wcs.myblog.repository.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,13 +19,21 @@ import java.util.stream.Collectors;
 public class ArticleController {
     private final ArticleRepository articleRepository;
     private final CategoryRepository categoryRepository;
-
     private final ImageRepository imageRepository;
+    private final AuthorRepository authorRepository;
+    private final ArticleAuthorRepository articleAuthorRepository;
 
-    public ArticleController(ArticleRepository articleRepository, CategoryRepository categoryRepository, ImageRepository imageRepository) {
+    public ArticleController(
+            ArticleRepository articleRepository,
+            CategoryRepository categoryRepository,
+            ImageRepository imageRepository,
+            AuthorRepository authorRepository,
+            ArticleAuthorRepository articleAuthorRepository) {
         this.articleRepository = articleRepository;
         this.categoryRepository = categoryRepository;
         this.imageRepository = imageRepository;
+        this.authorRepository = authorRepository;
+        this.articleAuthorRepository = articleAuthorRepository;
     }
 
     @GetMapping
@@ -123,6 +128,22 @@ public class ArticleController {
         }
 
         Article savedArticle = articleRepository.save(article);
+
+        // Ajout des auteurs dans la table de jointure
+        if (article.getArticleAuthors() != null) {
+            for (ArticleAuthor articleAuthor : article.getArticleAuthors()) {
+                Author author = articleAuthor.getAuthor();
+                author = authorRepository.findById(author.getId()).orElse(null);
+                if (author == null) {
+                    return ResponseEntity.badRequest().body(null);
+                }
+
+                articleAuthor.setAuthor(author);
+                articleAuthor.setArticle(savedArticle);
+
+                articleAuthorRepository.save(articleAuthor);
+            }
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedArticle));
     }
 
@@ -173,6 +194,37 @@ public class ArticleController {
             article.getImages().clear();
         }
 
+        if (articleDetails.getArticleAuthors() != null) {
+            // Supprimer manuellement les anciens ArticleAuthor
+            for (ArticleAuthor oldArticleAuthor : article.getArticleAuthors()) {
+                articleAuthorRepository.delete(oldArticleAuthor);
+            }
+
+            List<ArticleAuthor> updatedArticleAuthors = new ArrayList<>();
+
+            for (ArticleAuthor articleAuthorDetails : articleDetails.getArticleAuthors()) {
+                Author author = articleAuthorDetails.getAuthor();
+                author = authorRepository.findById(author.getId()).orElse(null);
+                if (author == null) {
+                    return ResponseEntity.badRequest().build();
+                }
+
+                // Créer et associer la nouvelle relation ArticleAuthor
+                ArticleAuthor newArticleAuthor = new ArticleAuthor();
+                newArticleAuthor.setAuthor(author);
+                newArticleAuthor.setArticle(article);
+                newArticleAuthor.setContribution(articleAuthorDetails.getContribution());
+
+                updatedArticleAuthors.add(newArticleAuthor);
+            }
+
+            for (ArticleAuthor articleAuthor : updatedArticleAuthors) {
+                articleAuthorRepository.save(articleAuthor);
+            }
+
+            article.setArticleAuthors(updatedArticleAuthors);
+        }
+
 
         Article updatedArticle = articleRepository.save(article);
         return ResponseEntity.ok(convertToDTO(updatedArticle));
@@ -184,6 +236,13 @@ public class ArticleController {
         Article article = articleRepository.findById(id).orElse(null);
         if (article == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        // Supprimer les associations ArticleAuthor manuellement
+        if (article.getArticleAuthors() != null) {
+            for (ArticleAuthor articleAuthor : article.getArticleAuthors()) {
+                articleAuthorRepository.delete(articleAuthor);
+            }
         }
 
         articleRepository.delete(article);
@@ -201,6 +260,19 @@ public class ArticleController {
         }
         if (article.getImages() != null) {
             articleDTO.setImageUrls(article.getImages().stream().map(Image::getUrl).collect(Collectors.toList()));
+        }
+
+        if (article.getArticleAuthors() != null) {
+            articleDTO.setAuthorDTOs(article.getArticleAuthors().stream()
+                    .filter(articleAuthor -> articleAuthor.getAuthor() != null)
+                    .map(articleAuthor -> {
+                        AuthorDTO authorDTO = new AuthorDTO();
+                        authorDTO.setId(articleAuthor.getAuthor().getId());
+                        authorDTO.setFirstname(articleAuthor.getAuthor().getFirstname());
+                        authorDTO.setLastname(articleAuthor.getAuthor().getLastname());
+                        return authorDTO;
+                    })
+                    .collect(Collectors.toList()));
         }
         return articleDTO;
     }
