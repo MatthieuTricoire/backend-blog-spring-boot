@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.wcs.myblog.dto.CategoryCreateDTO;
 import org.wcs.myblog.dto.CategoryDTO;
 import org.wcs.myblog.model.Category;
 import org.wcs.myblog.service.CategoryService;
@@ -44,8 +45,8 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody Category category) {
-        CategoryDTO savedCategory = categoryService.createCategory(category);
+    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryCreateDTO categoryCreateDTO) {
+        CategoryDTO savedCategory = categoryService.createCategory(categoryCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 

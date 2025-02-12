@@ -1,6 +1,7 @@
 package org.wcs.myblog.service;
 
 import org.springframework.stereotype.Service;
+import org.wcs.myblog.dto.CategoryCreateDTO;
 import org.wcs.myblog.dto.CategoryDTO;
 import org.wcs.myblog.mapper.CategoryMapper;
 import org.wcs.myblog.model.Category;
@@ -35,7 +36,8 @@ public class CategoryService {
         return categoryMapper.convertToDTO(category);
     }
 
-    public CategoryDTO createCategory(Category category) {
+    public CategoryDTO createCategory(CategoryCreateDTO categoryCreateDTO) {
+        Category category = categoryMapper.convertToEntity(categoryCreateDTO);
         Category savedCategory = categoryRepository.save(category);
         return categoryMapper.convertToDTO(savedCategory);
     }

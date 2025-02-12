@@ -1,6 +1,7 @@
 package org.wcs.myblog.mapper;
 
 import org.springframework.stereotype.Component;
+import org.wcs.myblog.dto.ImageCreateDTO;
 import org.wcs.myblog.dto.ImageDTO;
 import org.wcs.myblog.model.Article;
 import org.wcs.myblog.model.Image;
@@ -9,6 +10,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class ImageMapper {
+
+    public Image convertToEntity(ImageCreateDTO imageCreateDTO) {
+        Image image = new Image();
+        image.setUrl(imageCreateDTO.getUrl());
+        return image;
+    }
 
     public ImageDTO convertToDTO(Image image) {
         ImageDTO imageDTO = new ImageDTO();

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.wcs.myblog.dto.ImageCreateDTO;
 import org.wcs.myblog.dto.ImageDTO;
 import org.wcs.myblog.model.Image;
 import org.wcs.myblog.service.ImageService;
@@ -43,8 +44,8 @@ public class ImageController {
     }
 
     @PostMapping
-    public ResponseEntity<ImageDTO> createImage(@RequestBody Image image) {
-        ImageDTO images = imageService.createImage(image);
+    public ResponseEntity<ImageDTO> createImage(@RequestBody ImageCreateDTO imageCreateDTO) {
+        ImageDTO images = imageService.createImage(imageCreateDTO);
         return ResponseEntity.status(201).body(images);
     }
 

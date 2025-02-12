@@ -1,6 +1,7 @@
 package org.wcs.myblog.service;
 
 import org.springframework.stereotype.Service;
+import org.wcs.myblog.dto.ImageCreateDTO;
 import org.wcs.myblog.dto.ImageDTO;
 import org.wcs.myblog.mapper.ImageMapper;
 import org.wcs.myblog.model.Image;
@@ -35,7 +36,8 @@ public class ImageService {
         return imageMapper.convertToDTO(image);
     }
 
-    public ImageDTO createImage(Image image) {
+    public ImageDTO createImage(ImageCreateDTO imageCreateDTO) {
+        Image image = imageMapper.convertToEntity(imageCreateDTO);
         Image savedImage = imageRepository.save(image);
         return imageMapper.convertToDTO(savedImage);
     }
