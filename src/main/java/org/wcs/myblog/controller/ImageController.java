@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.wcs.myblog.dto.ImageDTO;
 import org.wcs.myblog.model.Image;
-import org.wcs.myblog.repository.ArticleRepository;
-import org.wcs.myblog.repository.ImageRepository;
 import org.wcs.myblog.service.ImageService;
 
 import java.util.List;
@@ -20,11 +18,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/images")
 public class ImageController {
-    private final ImageRepository imageRepository;
     private final ImageService imageService;
 
-    public ImageController(ImageRepository imageRepository, ArticleRepository articleRepository, ImageService imageService) {
-        this.imageRepository = imageRepository;
+    public ImageController(ImageService imageService) {
         this.imageService = imageService;
     }
 
@@ -63,12 +59,12 @@ public class ImageController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteImage(@PathVariable Long id) {
-        Image image = imageRepository.findById(id).orElse(null);
-        if (image == null) {
+
+        if (imageService.deleteImage(id)) {
             return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.noContent().build();
         }
-        imageRepository.delete(image);
-        return ResponseEntity.noContent().build();
     }
 
 }

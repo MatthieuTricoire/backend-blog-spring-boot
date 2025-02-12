@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.wcs.myblog.dto.AuthorDTO;
 import org.wcs.myblog.model.Author;
-import org.wcs.myblog.repository.AuthorRepository;
 import org.wcs.myblog.service.AuthorService;
 
 import java.util.List;
@@ -19,11 +18,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/authors")
 public class AuthorController {
-    private final AuthorRepository authorRepository;
     private final AuthorService authorService;
 
-    public AuthorController(AuthorRepository authorRepository, AuthorService authorService) {
-        this.authorRepository = authorRepository;
+    public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
     }
 

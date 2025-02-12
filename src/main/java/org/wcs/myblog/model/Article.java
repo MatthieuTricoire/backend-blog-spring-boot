@@ -1,6 +1,15 @@
 package org.wcs.myblog.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +20,7 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
     @Column(nullable = false, length = 50)
     private String title;
 
@@ -30,9 +39,9 @@ public class Article {
 
     @ManyToMany
     @JoinTable(
-            name = "article_image",
-            joinColumns = @JoinColumn(name = "article_id"),
-            inverseJoinColumns = @JoinColumn(name = "image_id")
+        name = "article_image",
+        joinColumns = @JoinColumn(name = "article_id"),
+        inverseJoinColumns = @JoinColumn(name = "image_id")
     )
     private List<Image> images;
 

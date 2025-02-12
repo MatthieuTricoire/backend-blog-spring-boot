@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.wcs.myblog.dto.CategoryDTO;
 import org.wcs.myblog.model.Category;
-import org.wcs.myblog.repository.CategoryRepository;
 import org.wcs.myblog.service.CategoryService;
 
 import java.util.List;
@@ -20,11 +19,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
-    private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
 
-    public CategoryController(CategoryRepository categoryRepository, CategoryService categoryService) {
-        this.categoryRepository = categoryRepository;
+    public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
