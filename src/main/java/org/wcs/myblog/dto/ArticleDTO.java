@@ -3,6 +3,7 @@ package org.wcs.myblog.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 public class ArticleDTO {
     private Long id;
     private String title;

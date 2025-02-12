@@ -1,7 +1,9 @@
 package org.wcs.myblog.service;
 
 import org.springframework.stereotype.Service;
+import org.wcs.myblog.dto.ArticleCreateDTO;
 import org.wcs.myblog.dto.ArticleDTO;
+import org.wcs.myblog.exception.ResourseNotFoundException;
 import org.wcs.myblog.mapper.ArticleMapper;
 import org.wcs.myblog.model.Article;
 import org.wcs.myblog.model.ArticleAuthor;
@@ -50,23 +52,18 @@ public class ArticleService {
     }
 
     public ArticleDTO getArticleById(Long id) {
-        Article article = articleRepository.findById(id).orElse(null);
-        if (article == null) {
-            return null;
-        }
+        Article article = articleRepository.findById(id).orElseThrow(() -> new ResourseNotFoundException("Article with id " + id + " not found."));
         return articleMapper.convertToDTO(article);
     }
 
-    public ArticleDTO createArticle(Article article) {
+    public ArticleDTO createArticle(ArticleCreateDTO articleCreateDTO) {
+        Article article = articleMapper.convertToEntity(articleCreateDTO);
         article.setCreatedAt(LocalDateTime.now());
         article.setUpdatedAt(LocalDateTime.now());
 
         // Gestion de la catégorie
         if (article.getCategory() != null) {
-            Category category = categoryRepository.findById(article.getCategory().getId()).orElse(null);
-            if (category == null) {
-                return null;
-            }
+            Category category = categoryRepository.findById(article.getCategory().getId()).orElseThrow(() -> new ResourseNotFoundException("Category with id " + article.getCategory().getId() + " not found."));
             article.setCategory(category);
         }
 
@@ -95,11 +92,7 @@ public class ArticleService {
         if (article.getArticleAuthors() != null) {
             for (ArticleAuthor articleAuthor : article.getArticleAuthors()) {
                 Author author = articleAuthor.getAuthor();
-                author = authorRepository.findById(author.getId()).orElse(null);
-                if (author == null) {
-                    return null;
-                }
-
+                author = authorRepository.findById(author.getId()).orElseThrow(() -> new ResourseNotFoundException("Author with id " + articleAuthor.getAuthor().getId() + " not found."));
                 articleAuthor.setAuthor(author);
                 articleAuthor.setArticle(savedArticle);
                 articleAuthor.setContribution(articleAuthor.getContribution());
@@ -112,20 +105,14 @@ public class ArticleService {
     }
 
     public ArticleDTO updateArticle(Long id, Article articleDetails) {
-        Article article = articleRepository.findById(id).orElse(null);
-        if (article == null) {
-            return null;
-        }
+        Article article = articleRepository.findById(id).orElseThrow(() -> new ResourseNotFoundException("Article with id " + id + " not found."));
         article.setTitle(articleDetails.getTitle());
         article.setContent(articleDetails.getContent());
         article.setUpdatedAt(LocalDateTime.now());
 
         // Mise à jour de la catégorie
         if (articleDetails.getCategory() != null) {
-            Category category = categoryRepository.findById(articleDetails.getCategory().getId()).orElse(null);
-            if (category == null) {
-                return null;
-            }
+            Category category = categoryRepository.findById(articleDetails.getCategory().getId()).orElseThrow(() -> new ResourseNotFoundException("Category with id " + articleDetails.getCategory().getId() + " not found."));
             article.setCategory(category);
         }
 

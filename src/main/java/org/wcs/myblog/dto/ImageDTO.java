@@ -1,9 +1,12 @@
 package org.wcs.myblog.dto;
 
+import org.hibernate.validator.constraints.URL;
+
 import java.util.List;
 
 public class ImageDTO {
     private Long id;
+    @URL(message = "URL must be valid")
     private String url;
     private List<Long> articleIds;
 

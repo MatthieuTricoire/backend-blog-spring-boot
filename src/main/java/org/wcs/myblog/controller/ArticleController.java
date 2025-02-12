@@ -1,5 +1,6 @@
 package org.wcs.myblog.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.wcs.myblog.dto.ArticleCreateDTO;
 import org.wcs.myblog.dto.ArticleDTO;
 import org.wcs.myblog.model.Article;
 import org.wcs.myblog.service.ArticleService;
@@ -38,24 +40,18 @@ public class ArticleController {
     @GetMapping("/{id}")
     public ResponseEntity<ArticleDTO> getArticleById(@PathVariable Long id) {
         ArticleDTO article = articleService.getArticleById(id);
-        if (article == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(article);
     }
 
     @PostMapping
-    public ResponseEntity<ArticleDTO> createArticle(@RequestBody Article article) {
-        ArticleDTO savedArticle = articleService.createArticle(article);
+    public ResponseEntity<ArticleDTO> createArticle(@Valid @RequestBody ArticleCreateDTO articleCreateDTO) {
+        ArticleDTO savedArticle = articleService.createArticle(articleCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedArticle);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ArticleDTO> updateArticle(@PathVariable Long id, @RequestBody Article articleDetails) {
         ArticleDTO updatedArticle = articleService.updateArticle(id, articleDetails);
-        if (updatedArticle == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(updatedArticle);
     }
 

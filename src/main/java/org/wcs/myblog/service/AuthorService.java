@@ -2,6 +2,7 @@ package org.wcs.myblog.service;
 
 import org.springframework.stereotype.Service;
 import org.wcs.myblog.dto.AuthorDTO;
+import org.wcs.myblog.exception.ResourseNotFoundException;
 import org.wcs.myblog.mapper.AuthorMapper;
 import org.wcs.myblog.model.Author;
 import org.wcs.myblog.repository.AuthorRepository;
@@ -28,7 +29,7 @@ public class AuthorService {
     }
 
     public AuthorDTO getAuthorById(Long id) {
-        Author author = authorRepository.findById(id).orElse(null);
+        Author author = authorRepository.findById(id).orElseThrow(() -> (new ResourseNotFoundException("Author with id " + id + " not found.")));
         if (author == null) {
             return null;
         }
@@ -41,10 +42,7 @@ public class AuthorService {
     }
 
     public AuthorDTO updateAuthor(Long id, Author authorDetails) {
-        Author author = authorRepository.findById(id).orElse(null);
-        if (author == null) {
-            return null;
-        }
+        Author author = authorRepository.findById(id).orElseThrow(() -> (new ResourseNotFoundException("Author with id " + id + " not found.")));
         author.setFirstname(authorDetails.getFirstname());
         author.setLastname(authorDetails.getLastname());
         Author updatedAuthor = authorRepository.save(author);
